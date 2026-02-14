@@ -29,7 +29,7 @@ const questions = [
     //Question n°2
     type: "image-choice", 
     question: "Quelle stratégie d'évolution de mod est bonne ?",
-    images: ["images/Slice_4.jpg","images/Slice_1.jpg","images/Slice_3.jpg","images/Slice_2.jpg"],
+    images: ["Quiz_Swgoh/images/Slice_4.jpg","Quiz_Swgoh/images/Slice_1.jpg","Quiz_Swgoh/images/Slice_3.jpg","Quiz_Swgoh/images/Slice_2.jpg"],
     correctIndex: 1
    },
 
@@ -198,3 +198,4 @@ function updateProgressBar() {
     progressBar.style.width = progressPercent + "%";
 }
 });
+
