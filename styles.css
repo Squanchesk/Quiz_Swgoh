@@ -1,0 +1,135 @@
+/* Body et background */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: white;
+    background-image: url("images/backgrounds.jpg");
+    background-size: cover;
+    background-position: center;
+    overflow-y: auto;   /* autorise le scroll si nécessaire */
+    display: block;
+    padding: 20px 0;
+}
+
+/* Container du quiz */
+.container {
+    max-width: 700px;
+    width: 95%;
+    min-height: none;
+    height: auto;
+    margin: 0 auto; /* centre horizontalement */
+    padding: 40px 20px;
+    background: rgba(15, 15, 25, 0.15);
+    border-radius: 15px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.2);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;       /* centré horizontalement */
+    justify-content: flex-start; /* commence en haut */
+    gap: 20px;
+
+    overflow-y: visible;
+}
+
+/* Titre */
+h1 {
+    margin: 0 0 20px 0;
+    font-size: 1.8em;
+}
+
+/* Progress bar */
+.progress-container {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    transition: width 0.4s ease;
+}
+
+/* Quiz et images */
+#quiz, #image-question {
+    padding: 10px 0;
+}
+
+/* Boutons */
+button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Options images */
+.image-options {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.img-choice {
+    width: 48%;
+    height: auto;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: transform 0.2s, border 0.2s;
+    max-height: none;
+    object-fit: contain;
+}
+
+.img-choice:hover {
+    transform: scale(1.05);
+    border: 2px solid #00c6ff;
+}
+
+/* Masquer élément */
+.hidden {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        gap: 10px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 10px;
+        margin: 6px 0;
+    }
+
+    .img-choice, #quiz img {
+        max-height: 90px;
+        width: auto;
+    }
+    
+    #quiz img { 
+        max-height: 200px;
+    }
+}
+
+img[src="images/modules.jpg"] {
+    width: 60%;
+    height: auto;
+}

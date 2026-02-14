@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Défi Modding GL</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="container">
+
+        <h1>⚔️ Défi Modding – Galactic Legends</h1>
+
+        <button id="start-btn">Commencer</button>
+        <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+
+        <!-- Quiz texte / single-image -->
+        <div id="quiz" class="hidden">
+            
+            <h2 id="question"></h2>
+
+            <button class="answer-btn">Réponse 1</button>
+            <button class="answer-btn">Réponse 2</button>
+            <button class="answer-btn">Réponse 3</button>
+            <button class="answer-btn">Réponse 4</button>
+
+            <p id="feedback"></p>
+
+        </div>
+
+        <!-- Quiz 4 images -->
+        <div id="image-question" class="hidden">
+            <h2 id="image-question-text"></h2>
+            <div class="image-options">
+                <img class="img-choice" data-index="0">
+                <img class="img-choice" data-index="1">
+                <img class="img-choice" data-index="2">
+                <img class="img-choice" data-index="3">
+            </div>
+            <p id="image-feedback"></p>
+        </div>
+
+        <button id="next-btn" disabled class="hidden">Suivant</button>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
