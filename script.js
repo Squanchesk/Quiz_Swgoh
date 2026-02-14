@@ -29,7 +29,7 @@ const questions = [
     //Question n°2
     type: "image-choice", 
     question: "Quelle stratégie d'évolution de mod est bonne ?",
-    images: ["images/Slice_4.jpg","images/Slice_1.jpg","images/Slice_3.jpg","images/Slice_2.jpg"],
+    images: ["images/Slice_4.JPG","images/Slice_1.JPG","images/Slice_3.JPG","images/Slice_2.JPG"],
     correctIndex: 1
    },
 
@@ -198,3 +198,4 @@ function updateProgressBar() {
     progressBar.style.width = progressPercent + "%";
 }
 });
+
