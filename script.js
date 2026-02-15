@@ -1,24 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-const startBtn = document.getElementById("start-btn");
-const nextBtn = document.getElementById("next-btn");
-const quiz = document.getElementById("quiz");
-const questionElement = document.getElementById("question");
-const feedback = document.getElementById("feedback");
-const answerButtons = document.querySelectorAll(".answer-btn");
-const imageQuestionText = document.getElementById("image-question-text");
-const imageOptions = document.querySelectorAll(".img-choice");
-const imageFeedback = document.getElementById("image-feedback");
+    const startBtn = document.getElementById("start-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const quiz = document.getElementById("quiz");
+    const questionElement = document.getElementById("question");
+    const feedback = document.getElementById("feedback");
+    const answerButtons = document.querySelectorAll(".answer-btn");
+    const imageQuestionText = document.getElementById("image-question-text");
+    const imageOptions = document.querySelectorAll(".img-choice");
+    const imageFeedback = document.getElementById("image-feedback");
+    const singleFeedback = document.getElementById("single-feedback");
+    const playerInput = document.getElementById("player-input");
+    const startContainer = document.getElementById("start-container");
+    const progressBar = document.getElementById("progress-bar");
 
-const progressBar = document.getElementById("progress-bar");
-let currentQuestion = 0;
-//const totalQuestions = 10;
-let score = 0;
+    let currentQuestion = 0;
+    let score = 0;
+    let playerName = "";
+    let answerStatusArray = []; // Ce tableau va contenir "Correct" ou "Incorrect" pour chaque question
 
-console.log(startBtn); // doit afficher <button id="start-btn">Commencer</button>
 
-const questions = [
-   {
-    //Question n°1
+    const questions = [{
+        // ... tes questions ici ...
+        //Question n°1
     type: "text", 
     question: "A quoi servent les mods ?",
     answers: ["Augmenter les stats d'un personnage", "Collectionner des modules", "A faire jolie", "C'est quoi un mod ?"],
@@ -58,143 +61,207 @@ const questions = [
     answers: ["Via les défis de modules & chargements", "Via la GA", "Via la TW", "Via les échanges entre joueurs"],
     correctIndex: 0
    },
-   
+
+   {
+    //Question n°6
+    type: "single-image", 
+    question: "Faut-il faire des refresh d'énergie module ?",
+    images: "images/WikiMods.jpg",
+    answers: ["Oui", "Non", "3*50", "Quelques-uns quand on peut"],
+    correctIndex: 3
+   },
+
+   {
+    //Question n°7
+    type: "single-image", 
+    question: "Quels set de mods farmer en priorité ?",
+    images: "images/Potency_Mods.jpg",
+    answers: ["Protection / Pouvoir / Défense", "Attaque / Coups Critiques / Santé", "Dégâts Critiques / Tenacité / Vitesse", "Attaque / Santé / Vitesse"],
+    correctIndex: 3
+   },
+
+   {
+   //Question n°8
+    type: "single-image", 
+    question: "Que faire quand le quota max de mods est atteint ?",
+    images: "images/Potency_Mods.jpg",
+    answers: ["Farmer d'autres mods", "Trier les mods et farmer les matériaux de slice", "Tout vendre", "Trier les mods"],
+    correctIndex: 1
+    },
+
+    {
+    //Question n°9
+    type: "single-image", 
+    question: "Comment savoir si son Toon est bien moddé ?",
+    images: "images/mod_toon.jpg",
+    answers: ["En comparant avec B2B Faune", "En posant la question sur Facebook", "Sur swgoh.gg et en demandant aux joueurs", "La réponse D"],
+    correctIndex: 2
+    },
+
+    {
+    //Question n°10
+    type: "single-image", 
+    question: "Quelle est la commande pour omegabot ?",
+    images: "images/omegabot.jpg",
+    answers: ["/modscore allycode: yourallycode", "/omega allycode: yourallycode", "omegabot allycode: yourallycode", "modscore allycode: yourallycode"],
+    correctIndex: 0
+    },
+
    /* { question: "Quels module n'est pas à améliorer ? Quelle est la stat prioritaire sur la flèche de SLKR en GAC ?",
     answers: ["Vitesse", "Offense", "Santé", "Tenacité"],
     correctIndex: 0
    },*/
-];
+    ];
 
-console.log(questions[0]);
+    // Démarrer le quiz
+    
 
 startBtn.addEventListener("click", () => {
-    startBtn.classList.add("hidden");
+    // Récupère le pseudo ou met "Joueur" par défaut
+    playerName = playerInput.value.trim() || "Joueur";
+
+    // Cache le container de départ
+    startContainer.classList.add("hidden");
+
+    // Affiche le quiz et le bouton suivant
     quiz.classList.remove("hidden");
     nextBtn.classList.remove("hidden");
+
+    // Charge la première question
     loadQuestion();
 });
 
-function loadQuestion() {
-   const current = questions[currentQuestion];
-   questionElement.innerHTML = "";
-   questionElement.textContent = current.question;
-   feedback.textContent = "";
-   imageFeedback.textContent = "";
-   updateProgressBar();
 
-   //questionElement.innerHTML = current.question;
+    function loadQuestion() {
+        window.scrollTo(0, 0);
+        const current = questions[currentQuestion];
 
-   // Reset affichage
-   answerButtons.forEach(btn => {
-      btn.style.display = "none";
-   });
+        // Reset affichage
+        questionElement.textContent = current.question;
+        feedback.textContent = "";
+        imageFeedback.textContent = "";
+        singleFeedback.textContent = "";
+        updateProgressBar();
 
-   document.getElementById("image-question").classList.add("hidden");
-   quiz.classList.remove("hidden");
+        answerButtons.forEach(btn => btn.style.display = "none");
+        document.getElementById("image-question").classList.add("hidden");
+        document.getElementById("image-single").classList.add("hidden");
+        quiz.classList.remove("hidden");
 
-   // QUESTION TEXTE
-   if (current.type === "text") {
+        if (current.type === "text") {
+            answerButtons.forEach((button, index) => {
+                button.style.display = "block";
+                button.textContent = current.answers[index];
+                button.onclick = () => checkAnswer(index);
+            });
+        }
 
-      answerButtons.forEach((button, index) => {
-         button.style.display = "block";
-         button.textContent = current.answers[index];
-         button.onclick = () => checkAnswer(index);
-      });
-   }
+        if (current.type === "single-image") {
+            quiz.classList.add("hidden");
+            document.getElementById("image-question").classList.add("hidden");
 
-   // QUESTION IMAGE + TEXTE
-   if (current.type === "single-image") {
+            const block = document.getElementById("image-single");
+            block.classList.remove("hidden");
+            document.getElementById("single-question").textContent = current.question;
+            document.getElementById("image-single-text").src = current.images;
 
-      const img = document.createElement("img");
-      img.src = current.images;
-      img.style.width = "60%";
-      img.style.marginBottom = "15px";
-      questionElement.appendChild(img);
+            const buttons = block.querySelectorAll(".single-answer");
+            buttons.forEach((button, index) => {
+                button.style.display = "block";
+                button.textContent = current.answers[index];
+                button.onclick = () => checkAnswer(index);
+            });
 
-      answerButtons.forEach((button, index) => {
-         button.style.display = "block";
-         button.textContent = current.answers[index];
-         button.onclick = () => checkAnswer(index);
-      });
-   }
+            singleFeedback.textContent = "";
+        }
 
-   // QUESTION 4 IMAGES
-   if (current.type === "image-choice") {
+        if (current.type === "image-choice") {
+            quiz.classList.add("hidden");
+            const imageQuiz = document.getElementById("image-question");
+            imageQuiz.classList.remove("hidden");
+            imageQuestionText.textContent = current.question;
 
-      quiz.classList.add("hidden");
-      const imageQuiz = document.getElementById("image-question");
-      imageQuiz.classList.remove("hidden");
-
-      imageQuestionText.textContent = current.question;
-
-      imageOptions.forEach((img, index) => {
-         img.src = current.images[index];
-         img.onclick = () => checkAnswer(index);
-      });
-   }
-}
-
-nextBtn.addEventListener("click", () => {
-    currentQuestion++;
-    if (currentQuestion < questions.length) {
-        loadQuestion();
-    } else {
-        showResults();
+            imageOptions.forEach((img, index) => {
+                img.src = current.images[index];
+                img.onclick = () => checkAnswer(index);
+            });
+        }
     }
-    nextBtn.disabled = true; // on désactive à chaque nouvelle question
+
+    nextBtn.addEventListener("click", () => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+        nextBtn.disabled = true;
+    });
+
+    function checkAnswer(index) {
+        const current = questions[currentQuestion];
+        let feedbackElement = current.type === "image-choice"
+            ? imageFeedback
+            : current.type === "single-image"
+            ? singleFeedback
+            : feedback;
+
+        feedbackElement.textContent = "";
+        if (index === current.correctIndex) {
+            feedbackElement.textContent = "✔ Bonne réponse !";
+            score++;
+            answerStatusArray[currentQuestion] = "Correct"
+        } else {
+            feedbackElement.textContent = "❌ Mauvaise réponse.";
+            answerStatusArray[currentQuestion] = "Incorrect";
+        }
+
+        nextBtn.disabled = false;
+        nextBtn.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+
+    function sendResultsToSheet() {
+    const dataToSend = {
+        pseudo: playerName,        // Le pseudo du joueur
+        score: score,              // Score total
+        answers: answerStatusArray // Tableau de réponses "Correct"/"Incorrect"
+    };
+
+    // Ensuite, on envoie ces données au script Apps Script
+    fetch("https://script.google.com/macros/s/AKfycbw9G_Qnx17ZpF9nNh4OoFYhfEmgpqbeVcG9IrDKrwhneo4K68Bam8ck5EofBpeWW0A/exec", {
+        method: "POST",
+        body: JSON.stringify(dataToSend),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Résultats envoyés :", data);
+    })
+    .catch(error => console.error("Erreur :", error));
+}
+
+
+    function showResults() {
+        nextBtn.classList.add("hidden");
+        document.getElementById("image-single").classList.add("hidden");
+        document.getElementById("image-question").classList.add("hidden");
+        quiz.classList.remove("hidden");   
+        quiz.innerHTML = `
+            <h2>Quiz terminé !</h2>
+            <p style="text-align:center;">Pseudo : <strong>${playerName}</strong></p>
+            <p style="text-align:center;">Score : ${score} / ${questions.length}</p>
+        `;
+
+        sendResultsToSheet();
+    }
+
+    function updateProgressBar() {
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        progressBar.style.width = progressPercent + "%";
+    }
 });
 
-function checkAnswer(index) {
-
-   const current = questions[currentQuestion];
-
-   // Choix du bon élément feedback
-   let feedbackElement;
-
-   if (current.type === "image-choice") {
-       feedbackElement = imageFeedback;
-   } else {
-       feedbackElement = feedback;
-   }
-
-   // Reset message précédent
-   feedbackElement.textContent = "";
-
-   if (index === current.correctIndex) {
-      feedbackElement.textContent = "✔ Bonne réponse !";
-      score++;
-   } else {
-      feedbackElement.textContent = "❌ Mauvaise réponse.";
-   }
-
-   // Activer le bouton Suivant
-    nextBtn.disabled = false;
-    nextBtn.scrollIntoView({ behavior: "smooth", block: "end" });
-
-    
-   /*setTimeout(() => {
-      currentQuestion++;
-
-      if (currentQuestion < questions.length) {
-         loadQuestion();
-      } else {
-         showResults();
-      }
-
-   }, 1000);*/
-}
-
-function showResults() {
-   quiz.innerHTML = `
-      <h2>Quiz terminé !</h2>
-      <p>Score : ${score} / ${questions.length}</p>
-   `;
-}
 
 
-
-function updateProgressBar() {
-    const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
-    progressBar.style.width = progressPercent + "%";
-}
-});

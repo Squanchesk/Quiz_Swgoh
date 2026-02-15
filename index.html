@@ -12,14 +12,19 @@
 
         <h1>⚔️ Défi Modding – Galactic Legends</h1>
 
-        <button id="start-btn">Commencer</button>
+        <!-- Container pour le pseudo et le bouton start -->
+        <div id="start-container">
+            <input type="text" id="player-input" placeholder="Entre ton pseudo">
+            <button id="start-btn">Commencer</button>
+        </div>
+
+        <!-- Progress bar -->
         <div class="progress-container">
-                <div id="progress-bar"></div>
-            </div>
+            <div id="progress-bar"></div>
+        </div>
 
         <!-- Quiz texte / single-image -->
         <div id="quiz" class="hidden">
-            
             <h2 id="question"></h2>
 
             <button class="answer-btn">Réponse 1</button>
@@ -28,7 +33,17 @@
             <button class="answer-btn">Réponse 4</button>
 
             <p id="feedback"></p>
+        </div>
 
+        <!-- Quiz single-image -->
+        <div id="image-single" class="hidden">
+            <h2 id="single-question"></h2>
+            <img id="image-single-text" class="question-image">
+            <button class="single-answer">Réponse 1</button>
+            <button class="single-answer">Réponse 2</button>
+            <button class="single-answer">Réponse 3</button>
+            <button class="single-answer">Réponse 4</button>
+            <p id="single-feedback"></p>
         </div>
 
         <!-- Quiz 4 images -->
