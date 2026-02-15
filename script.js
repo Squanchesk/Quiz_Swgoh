@@ -220,27 +220,33 @@ startBtn.addEventListener("click", () => {
         nextBtn.scrollIntoView({ behavior: "smooth", block: "end" });
     }
 
-    function sendResultsToSheet() {
-    const dataToSend = {
-        pseudo: playerName,        // Le pseudo du joueur
-        score: score,              // Score total
-        answers: answerStatusArray // Tableau de réponses "Correct"/"Incorrect"
-    };
+    function sendResultsToForm() {
 
-    // Ensuite, on envoie ces données au script Apps Script
-    fetch("https://script.google.com/macros/s/AKfycbw9G_Qnx17ZpF9nNh4OoFYhfEmgpqbeVcG9IrDKrwhneo4K68Bam8ck5EofBpeWW0A/exec", {
+        const formData = new FormData();
+
+        formData.append("entry.5824654", playerName);
+        formData.append("entry.78492408", score);
+
+        formData.append("entry.157484799", answerStatusArray[0]);
+        formData.append("entry.1055751246", answerStatusArray[1]);
+        formData.append("entry.305102737", answerStatusArray[2]);
+        formData.append("entry.357724666", answerStatusArray[3]);
+        formData.append("entry.1475643521", answerStatusArray[4]);
+        formData.append("entry.908713765", answerStatusArray[5]);
+        formData.append("entry.1233956739", answerStatusArray[6]);
+        formData.append("entry.1432476913", answerStatusArray[7]);
+        formData.append("entry.719696218", answerStatusArray[8]);
+        formData.append("entry.112668682", answerStatusArray[9]);
+
+        fetch("https://docs.google.com/forms/d/e/1FAIpQLSfb6zI6i6V-X5KMclYvtc3MwSTa329RSwunwQZlU-IzAJYTaw/formResponse", {
         method: "POST",
-        body: JSON.stringify(dataToSend),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Résultats envoyés :", data);
-    })
-    .catch(error => console.error("Erreur :", error));
-}
+        mode: "no-cors",
+        body: formData
+    });
+
+    console.log("Résultats envoyés !");
+    
+    }
 
 
     function showResults() {
@@ -254,7 +260,7 @@ startBtn.addEventListener("click", () => {
             <p style="text-align:center;">Score : ${score} / ${questions.length}</p>
         `;
 
-        sendResultsToSheet();
+        sendResultsToForm(playerName, score, answerStatusArray);
     }
 
     function updateProgressBar() {
