@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let score = 0;
     let playerName = "";
     let answerStatusArray = []; // Ce tableau va contenir "Correct" ou "Incorrect" pour chaque question
+    let hasAnswered = false;
+
 
 
     const questions = [{
@@ -133,60 +135,101 @@ startBtn.addEventListener("click", () => {
 
 
     function loadQuestion() {
-        window.scrollTo(0, 0);
-        const current = questions[currentQuestion];
+    window.scrollTo(0, 0);
 
-        // Reset affichage
+    const current = questions[currentQuestion];
+
+    hasAnswered = false;
+    nextBtn.disabled = true;
+
+    // Reset feedback
+    feedback.textContent = "";
+    imageFeedback.textContent = "";
+    singleFeedback.textContent = "";
+
+    updateProgressBar();
+
+    // Masquer tous les blocs
+    quiz.classList.remove("hidden");
+    document.getElementById("image-question").classList.add("hidden");
+    document.getElementById("image-single").classList.add("hidden");
+
+    // Masquer tous les boutons texte
+    answerButtons.forEach(btn => {
+        btn.style.display = "none";
+        btn.disabled = false;
+    });
+
+    // Réactiver images
+    imageOptions.forEach(img => {
+        img.style.pointerEvents = "auto";
+    });
+
+    let currentAnswerElements = [];
+
+    /* =========================
+       QUESTION TEXTE
+    ========================= */
+    if (current.type === "text") {
+
         questionElement.textContent = current.question;
-        feedback.textContent = "";
-        imageFeedback.textContent = "";
-        singleFeedback.textContent = "";
-        updateProgressBar();
 
-        answerButtons.forEach(btn => btn.style.display = "none");
-        document.getElementById("image-question").classList.add("hidden");
-        document.getElementById("image-single").classList.add("hidden");
-        quiz.classList.remove("hidden");
+        answerButtons.forEach((button, index) => {
+            button.style.display = "block";
+            button.textContent = current.answers[index];
+            button.onclick = () => checkAnswer(index, answerButtons);
+        });
 
-        if (current.type === "text") {
-            answerButtons.forEach((button, index) => {
-                button.style.display = "block";
-                button.textContent = current.answers[index];
-                button.onclick = () => checkAnswer(index);
-            });
-        }
-
-        if (current.type === "single-image") {
-            quiz.classList.add("hidden");
-            document.getElementById("image-question").classList.add("hidden");
-
-            const block = document.getElementById("image-single");
-            block.classList.remove("hidden");
-            document.getElementById("single-question").textContent = current.question;
-            document.getElementById("image-single-text").src = current.images;
-
-            const buttons = block.querySelectorAll(".single-answer");
-            buttons.forEach((button, index) => {
-                button.style.display = "block";
-                button.textContent = current.answers[index];
-                button.onclick = () => checkAnswer(index);
-            });
-
-            singleFeedback.textContent = "";
-        }
-
-        if (current.type === "image-choice") {
-            quiz.classList.add("hidden");
-            const imageQuiz = document.getElementById("image-question");
-            imageQuiz.classList.remove("hidden");
-            imageQuestionText.textContent = current.question;
-
-            imageOptions.forEach((img, index) => {
-                img.src = current.images[index];
-                img.onclick = () => checkAnswer(index);
-            });
-        }
+        currentAnswerElements = answerButtons;
     }
+
+    /* =========================
+       QUESTION IMAGE UNIQUE
+    ========================= */
+    if (current.type === "single-image") {
+
+        quiz.classList.add("hidden");
+
+        const block = document.getElementById("image-single");
+        block.classList.remove("hidden");
+
+        document.getElementById("single-question").textContent = current.question;
+        document.getElementById("image-single-text").src = current.images;
+
+        const buttons = block.querySelectorAll(".single-answer");
+
+        buttons.forEach((button, index) => {
+            button.disabled = false;
+            button.style.display = "block";
+            button.textContent = current.answers[index];
+            button.onclick = () => checkAnswer(index, buttons);
+        });
+
+        currentAnswerElements = buttons;
+    }
+
+    /* =========================
+       QUESTION IMAGE MULTIPLE
+    ========================= */
+    if (current.type === "image-choice") {
+
+        quiz.classList.add("hidden");
+
+        const imageQuiz = document.getElementById("image-question");
+        imageQuiz.classList.remove("hidden");
+
+        imageQuestionText.textContent = current.question;
+
+        imageOptions.forEach((img, index) => {
+            img.src = current.images[index];
+            img.style.pointerEvents = "auto";
+            img.onclick = () => checkAnswer(index, imageOptions);
+        });
+
+        currentAnswerElements = imageOptions;
+    }
+}
+
 
     nextBtn.addEventListener("click", () => {
         currentQuestion++;
@@ -199,26 +242,50 @@ startBtn.addEventListener("click", () => {
     });
 
     function checkAnswer(index) {
-        const current = questions[currentQuestion];
-        let feedbackElement = current.type === "image-choice"
-            ? imageFeedback
-            : current.type === "single-image"
-            ? singleFeedback
-            : feedback;
 
-        feedbackElement.textContent = "";
-        if (index === current.correctIndex) {
-            feedbackElement.textContent = "✔ Bonne réponse !";
-            score++;
-            answerStatusArray[currentQuestion] = "Correct"
-        } else {
-            feedbackElement.textContent = "❌ Mauvaise réponse.";
-            answerStatusArray[currentQuestion] = "Incorrect";
-        }
+    if (hasAnswered) return;
+    hasAnswered = true;
 
-        nextBtn.disabled = false;
-        nextBtn.scrollIntoView({ behavior: "smooth", block: "end" });
+    const current = questions[currentQuestion];
+
+    let feedbackElement = current.type === "image-choice"
+        ? imageFeedback
+        : current.type === "single-image"
+        ? singleFeedback
+        : feedback;
+
+    feedbackElement.textContent = "";
+
+    if (index === current.correctIndex) {
+        feedbackElement.textContent = "✔ Bonne réponse !";
+        score++;
+        answerStatusArray[currentQuestion] = "Correct";
+    } else {
+        feedbackElement.textContent = "❌ Mauvaise réponse.";
+        answerStatusArray[currentQuestion] = "Incorrect";
     }
+
+    /* =========================
+       Désactiver UNIQUEMENT la question active
+    ========================= */
+
+    if (current.type === "text") {
+        answerButtons.forEach(btn => btn.disabled = true);
+    }
+
+    if (current.type === "single-image") {
+        document.querySelectorAll("#image-single .single-answer")
+            .forEach(btn => btn.disabled = true);
+    }
+
+    if (current.type === "image-choice") {
+        imageOptions.forEach(img => img.style.pointerEvents = "none");
+    }
+
+    nextBtn.disabled = false;
+    nextBtn.scrollIntoView({ behavior: "smooth", block: "end" });
+}
+
 
     function sendResultsToForm() {
 
